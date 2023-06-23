@@ -1,0 +1,31 @@
+﻿@model System.Data.DataTable
+@{
+    ViewData["Title"] = "Пользователи";
+}
+<form method="post">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>Номер</td>
+                <td>Имя</td>
+                <td>Фамилия</td>
+                <td>Отчество</td>
+                <td>Дата рождения</td>
+                <td>Обновить данные</td>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Rows.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Rows[i][0]</td>
+                    <td><input type="text" name="FirstName" value="@Model.Rows[i][1]" /></td>
+                    <td><input type="text" name="LastName" value="@Model.Rows[i][2]" /></td>
+                    <td><input type="text" name="MiddleName" value="@Model.Rows[i][3]" /></td>
+                    <td><input type="date" name="birthday" value="@Model.Rows[i][4]" /></td>
+                    <td><button type="submit" name="Id" value="@Model.Rows[i][0]">Изменить</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
