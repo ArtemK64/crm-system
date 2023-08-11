@@ -1,0 +1,37 @@
+﻿version: "3.9"
+networks:
+  crm-system-app:
+    driver: bridge
+services:
+  sql-server-db:
+    container_name: sql-server-container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433"
+    networks:
+      - crm-system-app
+    volumes:
+      - sql-server-data:/var/opt/mssql/data
+    environment:
+      - ACCEPT_EULA=Y
+  hangfire:
+    image: healthopenshift/hangfire:1.0.0.1177
+    ports:
+      - "5000:5000"
+    networks:
+      - crm-system-app
+    depends_on:
+      - sql-server-db
+  app:
+    container_name: crm-system-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - crm-system-app
+    depends_on:
+      - sql-server-db
+volumes:
+  sql-server-data:

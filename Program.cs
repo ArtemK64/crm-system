@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Hangfire;
+using Microsoft.Extensions.Configuration;
 
 namespace CRMSystem
 {
@@ -16,7 +17,7 @@ namespace CRMSystem
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddHangfire(configuration => configuration.UseSqlServerStorage(
-                "Data Source=DESKTOP-POVKKBR\\SQLEXPRESS;Initial Catalog = crm; Integrated Security = True;"));
+                builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 

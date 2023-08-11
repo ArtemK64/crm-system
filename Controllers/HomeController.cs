@@ -1,6 +1,7 @@
 ﻿using CRMSystem.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -11,36 +12,36 @@ namespace CRMSystem.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-		private string ConnectionString = 
-			"Data Source=DESKTOP-POVKKBR\\SQLEXPRESS;Initial Catalog = crm; Integrated Security = True;";
+        private readonly IConfiguration _configuration;
 
-		public HomeController(ILogger<HomeController> logger)
-		{
-			_logger = logger;
-		}
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        {
+            _logger = logger;
+            _configuration = configuration;
+        }
 
-		public IActionResult Index()
+        public IActionResult Index()
 		{
-			DataTable table = new DataTable();
-			using (SqlConnection connection = new SqlConnection(ConnectionString))
-			{
-				connection.Open();
-				string query = "select * from Users";
-				SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-				adapter.Fill(table);	
-			}
+			DataTable table = new();
+            using (SqlConnection connection = new(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                string query = "select * from Users";
+                SqlDataAdapter adapter = new(query, connection);
+                adapter.Fill(table);
+            }
 			return View(table);
 		}
 
         [HttpPost]
         public IActionResult Index(int id, string firstName, string middleName, string lastName, DateTime birthday)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new(_configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
                 string query =
                     "update Users set FirstName=@FirstName, MiddleName=@MiddleName, LastName=@LastName, Birthday=@Birthday where Id=@Id";
-                SqlCommand command = new SqlCommand(query, connection);
+                SqlCommand command = new(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
                 command.Parameters.AddWithValue("@FirstName", firstName);
                 command.Parameters.AddWithValue("@MiddleName", middleName);
@@ -53,26 +54,26 @@ namespace CRMSystem.Controllers
 
         public IActionResult Orders()
         {
-            DataTable table = new DataTable();
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            DataTable table = new();
+            using (SqlConnection connection = new(_configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
                 string query = "select * from Orders";
-                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                SqlDataAdapter adapter = new(query, connection);
                 adapter.Fill(table);
             }
-            return View(table);
+                return View(table);
         }
 
         [HttpPost]
         public IActionResult Orders(int id, int userId, int totalPrice, DateTime dateOfOrder)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = new(_configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
                 string query =
                     "update Orders set UserId=@UserId, TotalPrice=@TotalPrice, DateOfOrder=@DateOfOrder where Id=@Id";
-                SqlCommand command = new SqlCommand(query, connection);
+                SqlCommand command = new(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
                 command.Parameters.AddWithValue("@UserId", userId);
                 command.Parameters.AddWithValue("@TotalPrice", totalPrice);
