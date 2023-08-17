@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["CRMSystem.csproj", "."]
-RUN dotnet restore "./CRMSystem.csproj"
+COPY ["PL.csproj", "."]
+RUN dotnet restore "./PL.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "CRMSystem.csproj" -c Release -o /app/build
+RUN dotnet build "PL.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "CRMSystem.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "PL.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CRMSystem.dll"]
+ENTRYPOINT ["dotnet", "PL.dll"]
