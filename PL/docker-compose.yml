@@ -1,4 +1,4 @@
-﻿version: "3.9"
+version: "3.9"
 networks:
   crm-system-app:
     driver: bridge
@@ -14,7 +14,7 @@ services:
       - sql-server-data:/var/opt/mssql/data
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=12345
+      - SA_PASSWORD=StrongPassword123
   hangfire:
     image: healthopenshift/hangfire:1.0.0.1177
     ports:
@@ -23,7 +23,7 @@ services:
       - crm-system-app
     depends_on:
       - sql-server-db
-  app:
+  pl:
     container_name: crm-system-container
     build:
       context: .
@@ -34,5 +34,7 @@ services:
       - crm-system-app
     depends_on:
       - sql-server-db
+    environment:
+      - DefaultConnection=Server=sql-server-db;Database=crm;User Id=sa;Password=StrongPassword123;
 volumes:
   sql-server-data:
